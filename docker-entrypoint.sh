@@ -26,10 +26,14 @@ elif [ -z "${BUCKET_ACCESSKEY}" ]; then
 elif [ -z "${BUCKET_SECRET}" ]; then
 	echo "! Error, no BUCKET_SECRET variable specified !"
 	exit 1
+elif [ -z "${ADMIN_TOKEN}" ]; then
+	echo "! Error, no ADMIN_TOKEN variable specified !"
+	exit 1
 fi
 
 # Create the config
 mv config.json.template config.json
+sed -i "s/##TOKEN##/${ADMIN_TOKEN}/g" config.json
 sed -i "s/##MYSQL_HOST##/${MYSQL_HOST}/g" config.json
 sed -i "s/##MYSQL_USERNAME##/${MYSQL_USERNAME}/g" config.json
 sed -i "s/##MYSQL_PASSWORD##/${MYSQL_PASSWORD}/g" config.json
