@@ -3,7 +3,7 @@ LABEL Maintainer Bas Kraai <bas@kraai.email>
 
 # Install tools
 RUN apt-get update \
-    && apt-get install --no-install-recommends -y wget mariadb-client \
+    && apt-get install --no-install-recommends -y wget mariadb-client jq \
     && rm -rf /var/lib/apt/lists/*
 
 # Install packages
