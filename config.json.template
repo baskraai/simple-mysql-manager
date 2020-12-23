@@ -1,0 +1,18 @@
+{
+	"tokens":
+	[
+		"##TOKEN##"
+	],
+	"mysql":
+	{
+		"host": "##MYSQL_HOST##",
+		"username": "##MYSQL_USERNAME##",
+		"password": "##MYSQL_PASSWORD##"
+	},
+	"bucket":
+	{
+		"host": "##BUCKET_HOST##",
+		"name": "##BUCKET_NAME##"
+	}
+
+}

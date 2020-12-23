@@ -8,6 +8,7 @@ import datetime
 import shlex
 import subprocess
 from time import sleep
+import os
 
 try:
     config_file = open('config.json')
@@ -126,15 +127,13 @@ def create_backup():
     sleep(2)
     
     # Check if backup is failed or finished
-    try:
-        f = open("/tmp/mysqldump/{}.error".format(backup_file))
+    files = os.listdir("/tmp/mysqldump/")
+    if "{}.error".format(backup_file) in files:
         return jsonify({"backup_failed": backup_file}), 500
-    except: 
-        try:
-            f = open("/tmp/mysqldump/{}.pid".format(backup_file))
-            return jsonify({"backup_in_progress": backup_file}), 200
-        except:
-            return jsonify({"backup_saved_to_s3": backup_file}), 200
+    elif "{}.pid".format(backup_file) in files:
+        return jsonify({"backup_in_progress": backup_file}), 201
+    else:
+        return jsonify({"backup_saved_to_s3": backup_file + ".sql"}), 200
 
 @api.route('/check_backup', methods=['GET'])
 def check_backup():
@@ -147,17 +146,18 @@ def check_backup():
 
     if "backup_file" not in data:
         return jsonify({"message": "ERROR: no backup_file given in payload"}), 417
+    
+    # Set the backup_file variable
+    backup_file = data['backup_file']
 
     # Check if backup is failed or finished
-    try:
-        f = open("/tmp/mysqldump/{}.error".format(data['backup_file']))
+    files = os.listdir("/tmp/mysqldump/")
+    if "{}.error".format(backup_file) in files:
         return jsonify({"backup_failed": backup_file}), 500
-    except: 
-        try:
-            f = open("/tmp/mysqldump/{}.pid".format(data['backup_file']))
-            return jsonify({"backup_in_progress": data['backup_file']}), 201
-        except:
-            return jsonify({"backup_saved_to_s3": data['backup_file']}), 200
+    elif "{}.pid".format(backup_file) in files:
+        return jsonify({"backup_in_progress": data['backup_file']}), 201
+    else:
+        return jsonify({"backup_saved_to_s3": data['backup_file'] + ".sql"}), 200
 
 if __name__ == '__main__':
-        api.run()
+        api.run(host='0.0.0.0')

@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  check:
+    name: Check the code
+    runs-on: ubuntu-latest
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: Shellcheck all the scripts
+        uses: ludeeus/action-shellcheck@master
+        env:
+          SHELLCHECK_OPTS: -e SC2181
+
+      - name: Check the dockerfile
+        uses: brpaz/hadolint-action@master
+
+  building:
+    name: Buidling and uploading the image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: docker/login-action@v1
+        name: Login to DockerHub
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - uses: satackey/action-docker-layer-caching@v0.0.8
+        # Ignore the failure of a step and avoid terminating the job.
+        continue-on-error: true
+
+      - name: Pull the most recent version of the ubuntu docker container
+        run: docker pull python:3.9-buster
+
+      - name: Build the container
+        run: docker build -t baskraai/simple-mysql-manager:stable .
+
+      - name: Push build as most recent
+        run: docker push baskraai/simple-mysql-manager:stable
