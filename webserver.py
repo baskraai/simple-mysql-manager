@@ -69,7 +69,7 @@ def create_database():
 
     # Create the user
     password = secrets.token_urlsafe(20) 
-    query = "CREATE USER '{}'@'%' IDENTIFIED BY '{}'; ".format(data['name'],password)
+    query = "CREATE USER '{}'@'%' IDENTIFIED WITH mysql_native_password BY '{}'; ".format(data['name'],password)
     query_database(query)
 
     # Grand user all rights
