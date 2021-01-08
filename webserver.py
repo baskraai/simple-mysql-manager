@@ -31,7 +31,7 @@ def auth_check(request):
         return False
 
 def query_database(query):
-    db = pymysql.connect(config['mysql']['host'],config['mysql']['username'],config['mysql']['password'])
+    db = pymysql.connect(host=config['mysql']['host'],user=config['mysql']['username'],password=config['mysql']['password'])
     cursor = db.cursor()
     cursor.execute(query)
     data = cursor.fetchall()
