@@ -1,6 +1,8 @@
 FROM python:3.9-buster
 LABEL Maintainer Bas Kraai <bas@kraai.email>
 
+WORKDIR /app
+
 # Install tools
 RUN apt-get update \
     && apt-get install --no-install-recommends -y wget mariadb-client jq \
@@ -19,6 +21,5 @@ EXPOSE 5000
 
 COPY . /app
 
-WORKDIR /app
 RUN chmod +x docker-entrypoint.sh
 ENTRYPOINT ["/app/docker-entrypoint.sh"]
