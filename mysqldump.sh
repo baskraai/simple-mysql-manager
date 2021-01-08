@@ -35,13 +35,20 @@ fi
 if [ ! $? -eq 0 ]; then
 	rm -f /tmp/mysqldump/"$2.pid"
 	rm -f /tmp/mysqldump/"${BACKUPNAME}.sql"
-	touch /tmp/mysqldump/"$2.error"
-	exit 1
+	echo "MySQL Dump failed" > /tmp/mysqldump/"$2.error"
+	xit 1
 fi
 
 # Copy the sql-file to the bucket
 mc cp /tmp/mysqldump/"${BACKUPNAME}.sql" "${BUCKET_HOST}"/"${BUCKET_NAME}"
 
-rm -f /tmp/mysqldump/"${BACKUPNAME}.pid"
-rm -f /tmp/mysqldump/"${BACKUPNAME}.sql"
-touch /tmp/mysqldump/"${BACKUPNAME}.succesful"
+if [ ! $? -eq 0 ]; then
+	rm -f /tmp/mysqldump/"$2.pid"
+	rm -f /tmp/mysqldump/"${BACKUPNAME}.sql"
+	echo "Minio place failed" > /tmp/mysqldump/"$2.error"
+	exit 1
+else
+	rm -f /tmp/mysqldump/"${BACKUPNAME}.pid"
+	rm -f /tmp/mysqldump/"${BACKUPNAME}.sql"
+	touch /tmp/mysqldump/"${BACKUPNAME}.succesful"
+fi
